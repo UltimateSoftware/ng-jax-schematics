@@ -2,12 +2,8 @@
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "class-test": {
-      "description": "A class test.",
-      "factory": "./schematic/index#classTest"
-    },
-    "ng-add": {
-      "description": "Add a class test for an Angular class.",
-      "factory": "./schematic-starter/index#classTest"
+      "description": "Generates a class test for the given class.",
+      "factory": "./class-test/index#classTest"
     }
   }
 }
