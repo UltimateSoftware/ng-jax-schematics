@@ -1,5 +1,5 @@
 {
-  "name": "schematic-starter",
+  "name": "jack-schematic",
   "version": "0.0.0",
   "description": "A blank schematics",
   "scripts": {
@@ -7,8 +7,8 @@
     "build:clean:launch": "npm run build && npm run clean:launch",
     "clean": "git checkout HEAD -- ../sample-projects/tour-of-heroes && git clean -f -d ../sample-projects/tour-of-heroes",
     "clean:launch": "npm run clean && npm run launch",
-    "launch": "cd sandbox && ng g schematic-starter:schematic-starter",
-    "link:schematic": "npm link && cd ../sample-projects/tour-of-heroes && npm link schematic-starter",
+    "launch": "cd sandbox && ng g jack-schematic:class-test",
+    "link:schematic": "npm link && cd ../sample-projects/tour-of-heroes && npm link jack-schematic",
     "publish": "npm run build",
     "test": "npm run build:clean:launch && npm run test:sandbox && npm run clean",
     "test:sandbox": "cd ../sample-projects/tour-of-heroes && npm run lint && npm run test && npm run e2e && npm run build",
