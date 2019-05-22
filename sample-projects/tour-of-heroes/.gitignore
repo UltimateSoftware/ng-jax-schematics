@@ -1,0 +1,11 @@
+# IDEs
+.idea/
+jsconfig.json
+.vscode/
+
+# Misc
+npm-debug.log*
+yarn-error.log*
+
+# Mac OSX Finder files.
+.DS_Store
