@@ -18,6 +18,7 @@ interface ClassTestOptions {
   remainder: string | string[];
   classType: string;
   fileExt: string;
+  methods: Method[];
 }
 
 interface Branch {
@@ -57,6 +58,8 @@ export function classTest(_options: ClassTestOptions): Rule {
     // getBranches.findBranches.bind(getBranches)(sourceFile);
     // console.log('getBranches.branches', getBranches.branches);
 
+    _options.methods = getMethodNames.methods;
+
     return createClassTest(tree, _context);
   };
 
@@ -76,6 +79,8 @@ export function classTest(_options: ClassTestOptions): Rule {
       template({
         ...strings,
         ..._options,
+        createTests,
+        createTestsRec,
       }),
       move(_options.filePath),
     ])(_context);
@@ -148,3 +153,45 @@ const getConditionals = {
     ts.forEachChild(node, this.findConditionals.bind(this));
   },
 };
+
+function createTests(method: Method): string {
+  return `it('${method.methodName} should <do something>', () => {
+    // Arrange
+
+    // Act
+
+    // Assert
+
+  });`;
+}
+
+function createTestsRec(branch: Branch, methodName: string): string {
+  if (!branch.branches) {
+    return `it('${methodName} ${branch.expression} true >', () => {
+      // Arrange
+
+      // Act
+
+      // Assert
+
+    });
+
+    it('${methodName} ${branch.expression} flase >', () => {
+      // Arrange
+
+      // Act
+
+      // Assert
+
+    });`;
+  }
+  let nestedTests = '';
+  for (let nestBracnh of branch.branches) {
+    nestedTests =
+      nestedTests +
+      createTestsRec(nestBracnh, methodName + ` ${branch.expression} true`) +
+      '\n' +
+      createTestsRec(nestBracnh, ` ${branch.expression} flase`);
+  }
+  return nestedTests;
+}
