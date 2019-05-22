@@ -3,7 +3,8 @@
   "schematics": {
     "class-test": {
       "description": "Generates a class test for the given class.",
-      "factory": "./class-test/index#classTest"
+      "factory": "./class-test/index#classTest",
+      "schema": "./class-test/schema.json"
     }
   }
 }
