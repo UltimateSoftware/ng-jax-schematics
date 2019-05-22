@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "build:clean:launch": "npm run build && npm run clean:launch",
     "clean": "git checkout HEAD -- ../sample-projects/tour-of-heroes && git clean -f -d ../sample-projects/tour-of-heroes",
-    "clean:launch": "npm run clean && npm run launch",
+    "clean:launch": "npm run launch",
     "launch": "cd ../sample-projects/tour-of-heroes && ng g jack-schematic:class-test",
     "link:schematic": "npm link && cd ../sample-projects/tour-of-heroes && npm link jack-schematic",
     "publish": "npm run build",
