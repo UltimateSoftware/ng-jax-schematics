@@ -1,7 +1,6 @@
 import { async, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
-import { <%= classify(name) %>Component } from './<=% name %>.component';
+import { <%= classify(name) %>Component } from './<%= name %>.component';
 
 describe('<%= classify(name) %>Component Class', () => {
   let component: <%= classify(name) %>Component;
@@ -15,8 +14,7 @@ describe('<%= classify(name) %>Component Class', () => {
       imports: [],
       providers: [
         <%= classify(name) %>Component,
-      ],
-      schemas: [ NO_ERRORS_SCHEMA ],
+      ]
     }).compileComponents();
   }));
 
