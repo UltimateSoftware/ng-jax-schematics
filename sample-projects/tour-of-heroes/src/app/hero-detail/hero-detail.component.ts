@@ -44,8 +44,14 @@ export class HeroDetailComponent implements OnInit {
   }
 
   sample2(): boolean {
+    if (!true) {
+      // DO SOMETIN
+    } else {
+      // DO NOT DO THAT SOMETIN
+    }
+
     if (false) {
-      return true;
+      // DO ABSOLUTELY NOTHING
     } else {
       return false;
     }
