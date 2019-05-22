@@ -1,8 +1,23 @@
 import * as ts from 'typescript';
-import { Rule, SchematicContext, Tree, SchematicsException } from '@angular-devkit/schematics';
+import {
+  Rule,
+  SchematicContext,
+  Tree,
+  SchematicsException,
+  url,
+  apply,
+  template,
+  move,
+} from '@angular-devkit/schematics';
+import { strings } from '@angular-devkit/core';
 
 interface ClassTestOptions {
   filePath: string;
+  fileName: string;
+  name: string;
+  remainder: string | string[];
+  classType: string;
+  fileExt: string;
 }
 
 // filepath: src/app/hero-detail/hero-detail.component.ts
@@ -29,7 +44,30 @@ export function classTest(_options: ClassTestOptions): Rule {
     console.log('getConditionals.ifStatementCount', getConditionals.ifStatementCount);
     console.log('getConditionals.ternaryStatementCount', getConditionals.ternaryStatementCount);
     console.log('getConditionals.totalCount', getConditionals.totalCount);
+
+    return createClassTest(tree, _context);
   };
+
+  function createClassTest(tree: Tree, _context: SchematicContext) {
+    // TODO: include case without /
+    _options.fileName = _options.filePath.substring(_options.filePath.lastIndexOf('/') + 1);
+
+    const fileName = _options.fileName.split('.');
+    _options.name = fileName[0];
+    _options.classType = fileName[1];
+    _options.fileExt = fileName.slice(-1)[0];
+    _options.remainder = fileName.slice(2, -2); // Note: this will only work for Angular files
+    _options.filePath = _options.filePath.substring(0, _options.filePath.lastIndexOf('/') + 1);
+
+    const source = url('./files');
+    return apply(source, [
+      template({
+        ...strings,
+        ..._options,
+      }),
+      move(_options.filePath),
+    ])(_context);
+  }
 }
 
 const getMethodNames = {
