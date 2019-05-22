@@ -20,6 +20,16 @@ interface ClassTestOptions {
   fileExt: string;
 }
 
+interface Branch {
+  expression: string;
+  branches?: Branch[];
+}
+
+interface Method {
+  methodName: string;
+  branches?: Branch[];
+}
+
 // filepath: src/app/hero-detail/hero-detail.component.ts
 export function classTest(_options: ClassTestOptions): Rule {
   return (tree: Tree, _context: SchematicContext) => {
@@ -37,13 +47,15 @@ export function classTest(_options: ClassTestOptions): Rule {
     );
 
     getMethodNames.findMethodNames.bind(getMethodNames)(sourceFile);
-    const methodNames = getMethodNames.methodNames.filter((n) => n !== '');
-    console.log('getMethodNames.methodNames', methodNames);
+    console.log('getMethodNames.methods', JSON.stringify(getMethodNames.methods));
 
     getConditionals.findConditionals.bind(getConditionals)(sourceFile);
     console.log('getConditionals.ifStatementCount', getConditionals.ifStatementCount);
     console.log('getConditionals.ternaryStatementCount', getConditionals.ternaryStatementCount);
     console.log('getConditionals.totalCount', getConditionals.totalCount);
+
+    // getBranches.findBranches.bind(getBranches)(sourceFile);
+    // console.log('getBranches.branches', getBranches.branches);
 
     return createClassTest(tree, _context);
   };
@@ -71,16 +83,49 @@ export function classTest(_options: ClassTestOptions): Rule {
 }
 
 const getMethodNames = {
-  methodNames: [''],
+  methods: [] as Method[],
   findMethodNames: function(node: ts.Node): any {
     switch (node.kind) {
       case ts.SyntaxKind.MethodDeclaration:
         const methodDeclaration = node as ts.MethodDeclaration;
         const nameIdentifier = methodDeclaration.name as ts.Identifier;
-        this.methodNames = [...this.methodNames, nameIdentifier.escapedText as string];
+        getBranches.branches = [];
+        getBranches.findBranches.bind(getBranches)(methodDeclaration);
+        const method: Method = {
+          methodName: nameIdentifier.escapedText as string,
+          branches: getBranches.branches,
+        };
+        this.methods = [...this.methods, method];
         break;
     }
     ts.forEachChild(node, this.findMethodNames.bind(this));
+  },
+};
+
+const getBranches = {
+  branches: [] as Branch[],
+  findBranches: function(node: ts.Node): any {
+    switch (node.kind) {
+      // Handle if statements
+      case ts.SyntaxKind.IfStatement:
+        const ifStatement = node as ts.IfStatement;
+        const expression = ifStatement.expression as ts.Expression;
+        const ifStatementBranch: Branch = {
+          expression: expression.getText(),
+        };
+        this.branches = [...this.branches, ifStatementBranch];
+        break;
+      // Handle ternary
+      case ts.SyntaxKind.ConditionalExpression:
+        const conditionalExpression = node as ts.ConditionalExpression;
+        const condition = conditionalExpression.condition as ts.Expression;
+        const conditionalExpressionBranch: Branch = {
+          expression: condition.getText() as string,
+        };
+        this.branches = [...this.branches, conditionalExpressionBranch];
+        break;
+    }
+    ts.forEachChild(node, this.findBranches.bind(this));
   },
 };
 
