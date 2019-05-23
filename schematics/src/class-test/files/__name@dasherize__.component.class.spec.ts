@@ -21,13 +21,13 @@ describe('<%= classify(name) %>Component Class', () => {
   beforeEach(() => {
     component = TestBed.get(<%= classify(name) %>Component);
   });
-<% for (let method of methods) { %>
-  <% if (method.branches.length == 0) { %>
+
+  it('should create an instance', () => {
+    expect(component).toBeDefined();
+  });
+<% for (let method of methods) { if (method.branches.length == 0) { %>
     <%= createTests(method)%>
-  <% } else { %>
-    <% for (let branch of method.branches) { %>
+  <% } else { for (let branch of method.branches) { %>
       <%= createTestsRec(branch, method.methodName + ' should do <') %>
-    <% } %>
-  <% } %>
-<% } %>
+    <% } } } %>
 });
