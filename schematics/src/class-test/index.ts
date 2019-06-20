@@ -31,7 +31,6 @@ interface Method {
   branches?: Branch[];
 }
 
-// filepath: src/app/hero-detail/hero-detail.component.ts
 export function classTest(_options: ClassTestOptions): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const fileBuffer = tree.read(_options.filePath);
@@ -47,23 +46,10 @@ export function classTest(_options: ClassTestOptions): Rule {
       true
     );
     const classDeclaration = sourceFile.statements
-      .filter((nodes) => nodes.kind === ts.SyntaxKind.ClassDeclaration)
+      .filter((nodes: any) => nodes.kind === ts.SyntaxKind.ClassDeclaration)
       .pop() as ts.Node;
 
     const mehtods = getMethods(classDeclaration);
-
-    // console.log(JSON.stringify(mehtods2));
-
-    // getMethodNames.findMethodNames.bind(getMethodNames)(sourceFile);
-    // console.log('getMethodNames.methods', JSON.stringify(getMethodNames.methods));
-
-    // getConditionals.findConditionals.bind(getConditionals)(sourceFile);
-    // console.log('getConditionals.ifStatementCount', getConditionals.ifStatementCount);
-    // console.log('getConditionals.ternaryStatementCount', getConditionals.ternaryStatementCount);
-    // console.log('getConditionals.totalCount', getConditionals.totalCount);
-
-    // getBranches.findBranches.bind(getBranches)(sourceFile);
-    // console.log('getBranches.branches', getBranches.branches);
 
     _options.methods = mehtods;
 
@@ -94,73 +80,6 @@ export function classTest(_options: ClassTestOptions): Rule {
   }
 }
 
-// const getMethodNames = {
-//   methods: [] as Method[],
-//   findMethodNames: function(node: ts.Node): any {
-//     switch (node.kind) {
-//       case ts.SyntaxKind.MethodDeclaration:
-//         const methodDeclaration = node as ts.MethodDeclaration;
-//         const nameIdentifier = methodDeclaration.name as ts.Identifier;
-//         getBranches.branches = [];
-//         getBranches.findBranches.bind(getBranches)(methodDeclaration);
-//         const method: Method = {
-//           methodName: nameIdentifier.escapedText as string,
-//           branches: getBranches.branches,
-//         };
-//         this.methods = [...this.methods, method];
-//         break;
-//     }
-//     ts.forEachChild(node, this.findMethodNames.bind(this));
-//   },
-// };
-
-// const getBranches = {
-//   branches: [] as Branch[],
-//   findBranches: function(node: ts.Node): any {
-//     switch (node.kind) {
-//       // Handle if statements
-//       case ts.SyntaxKind.IfStatement:
-//         const ifStatement = node as ts.IfStatement;
-//         const expression = ifStatement.expression as ts.Expression;
-//         const ifStatementBranch: Branch = {
-//           expression: expression.getText(),
-//         };
-//         this.branches = [...this.branches, ifStatementBranch];
-//         break;
-//       // Handle ternary
-//       case ts.SyntaxKind.ConditionalExpression:
-//         const conditionalExpression = node as ts.ConditionalExpression;
-//         const condition = conditionalExpression.condition as ts.Expression;
-//         const conditionalExpressionBranch: Branch = {
-//           expression: condition.getText() as string,
-//         };
-//         this.branches = [...this.branches, conditionalExpressionBranch];
-//         break;
-//     }
-//     ts.forEachChild(node, this.findBranches.bind(this));
-//   },
-// };
-
-// const getConditionals = {
-//   ifStatementCount: 0,
-//   ternaryStatementCount: 0,
-//   totalCount: 0,
-//   findConditionals: function(node: ts.Node) {
-//     switch (node.kind) {
-//       case ts.SyntaxKind.IfStatement:
-//         this.ifStatementCount += 1;
-//         break;
-//       case ts.SyntaxKind.ConditionalExpression:
-//         this.ternaryStatementCount += 1;
-//         break;
-//     }
-
-//     this.totalCount = this.ifStatementCount + this.ternaryStatementCount;
-
-//     ts.forEachChild(node, this.findConditionals.bind(this));
-//   },
-// };
-
 function getMethods(node: any) {
   let methods: Method[] = [];
   const childern = node.members;
@@ -170,7 +89,7 @@ function getMethods(node: any) {
       case ts.SyntaxKind.MethodDeclaration:
         const methodDeclaration = child as ts.MethodDeclaration;
         const nameIdentifier = methodDeclaration.name as ts.Identifier;
-        const branches: Branch[] = getBranches2(methodDeclaration.body);
+        const branches: Branch[] = getBranches(methodDeclaration.body);
         const method: Method = {
           methodName: nameIdentifier.escapedText as string,
           branches: branches,
@@ -182,7 +101,7 @@ function getMethods(node: any) {
   return methods;
 }
 
-function getBranches2(node: any) {
+function getBranches(node: any) {
   let branches: Branch[] = [];
   if (!node) {
     return branches;
@@ -197,8 +116,8 @@ function getBranches2(node: any) {
         const branchIfStatement: Branch = {
           expression: expressionIfStatement,
           branches: [
-            ...getBranches2(ifStatement.thenStatement),
-            ...getBranches2(ifStatement.elseStatement),
+            ...getBranches(ifStatement.thenStatement),
+            ...getBranches(ifStatement.elseStatement),
           ],
         };
         branches = [...branches, branchIfStatement];
@@ -209,8 +128,8 @@ function getBranches2(node: any) {
         const branchConditional: Branch = {
           expression: expressionConditionalExpression,
           branches: [
-            ...getBranches2(conditionalExpression.whenTrue),
-            ...getBranches2(conditionalExpression.whenFalse),
+            ...getBranches(conditionalExpression.whenTrue),
+            ...getBranches(conditionalExpression.whenFalse),
           ],
         };
         branches = [...branches, branchConditional];
@@ -245,7 +164,7 @@ function createTestsRec(branch: Branch, methodName: string): string {
 
     });
 
-    it('${methodName} (${branch.expression}) flase >', () => {
+    it('${methodName} (${branch.expression}) false >', () => {
       // Arrange
 
       // Act

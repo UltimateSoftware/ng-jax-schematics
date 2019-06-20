@@ -2,6 +2,11 @@
 
 Library of testing things.
 
+## Usage
+
+[in-progress] `npm install ng-jack-schematics --save-dev`
+
+
 ## Schematics
 -------
 
